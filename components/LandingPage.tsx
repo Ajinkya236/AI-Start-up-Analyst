@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from './Header';
 import HeroSection from './HeroSection';
@@ -9,14 +8,15 @@ import FinalCtaSection from './FinalCtaSection';
 
 interface LandingPageProps {
   onAnalyze: () => void;
+  onRegister: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onAnalyze }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onAnalyze, onRegister }) => {
   return (
     <div className="overflow-x-hidden">
-      <Header onAnalyze={onAnalyze} />
+      <Header onAnalyze={onAnalyze} onRegister={onRegister} />
       <main className="container mx-auto px-6 md:px-8">
-        <HeroSection onAnalyze={onAnalyze} />
+        <HeroSection onAnalyze={onAnalyze} onRegister={onRegister} />
         <BenefitsSection />
         <SocialProofSection />
         <FaqSection />

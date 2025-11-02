@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+// FIX: The App.tsx file is now a proper module, so this import will work.
 import { Report } from '../App';
 import { XIcon } from './icons/Icons';
 

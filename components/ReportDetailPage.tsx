@@ -1,7 +1,10 @@
 import React from 'react';
+// FIX: The App.tsx file is now a proper module, so this import will work.
 import { Report } from '../App';
 import Stage0DataCollection from './Stage0DataCollection';
+// FIX: The Stage1InvestmentMemo.tsx file is now a proper module, so this import will work.
 import Stage1InvestmentMemo from './Stage1InvestmentMemo';
+// FIX: The Stage2CuratedMemo.tsx file is now a proper module, so this import will work.
 import Stage2CuratedMemo from './Stage2CuratedMemo';
 import { ChevronLeftIcon } from './icons/Icons';
 
@@ -39,8 +42,27 @@ const ReportDetailPage: React.FC<ReportDetailPageProps> = ({ report, onUpdateRep
     };
     
     const handleNextStage = () => {
-        if(report.currentStage < 2) {
-            onUpdateReport(report.id, { currentStage: report.currentStage + 1 });
+        if (report.currentStage < 2) {
+            if (report.currentStage === 0) { // Moving from Data Collection to Memo
+                // Invalidate the memo to force regeneration based on current source selection
+                onUpdateReport(report.id, { 
+                    currentStage: 1,
+                    investmentMemo: {
+                        ...report.investmentMemo,
+                        content: '', // Clear old content
+                        status: 'idle', // Reset status
+                    },
+                    // Also clear curated memo as it's downstream
+                    curatedMemo: { 
+                        ...report.curatedMemo,
+                        content: '',
+                        status: 'idle',
+                    }
+                });
+            } else {
+                // Normal stage progression for other stages
+                onUpdateReport(report.id, { currentStage: report.currentStage + 1 });
+            }
         }
     }
 

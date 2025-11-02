@@ -64,8 +64,16 @@ export const LinkIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props 
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
 );
 
+export const YoutubeIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+);
+
 export const UploadIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+);
+
+export const ImageIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
 );
 
 export const CheckCircleIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props }) => (
@@ -94,4 +102,20 @@ export const SparklesIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...pr
 
 export const DownloadIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props }) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+);
+
+export const BuildingOfficeIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
+        <path fillRule="evenodd" d="M4.5 2.25a.75.75 0 0 0-.75.75v12.5a.75.75 0 0 0 .75.75h.75v.25a.75.75 0 0 0 .75.75h3.5a.75.75 0 0 0 .75-.75v-.25h.75a.75.75 0 0 0 .75-.75V3a.75.75 0 0 0-.75-.75h-7.5ZM9 15h-3.5v-2.5h3.5V15Z" clipRule="evenodd" />
+        <path d="M10.5 17.25v.25a.75.75 0 0 0 .75.75h3.5a.75.75 0 0 0 .75-.75v-.25h.75a.75.75 0 0 0 .75-.75V9.75a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0-.75.75v6.75a.75.75 0 0 0 .75.75h.75Z" />
+        <path d="M17.25 21.75a.75.75 0 0 0 .75-.75v-6.75a.75.75 0 0 0-.75-.75h-7.5a.75.75 0 0 0-.75.75v6.75a.75.75 0 0 0 .75.75h.75v.25a.75.75 0 0 0 .75.75h3.5a.75.75 0 0 0 .75-.75v-.25h.75Z" />
+    </svg>
+);
+
+export const UserPlusIcon: React.FC<IconProps> = ({ className = "w-6 h-6", ...props }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className} {...props}>
+        <path d="M10.5 6a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Z" />
+        <path fillRule="evenodd" d="M1.5 15a6.75 6.75 0 0 1 6.75-6.75h.75a6.75 6.75 0 0 1 6.75 6.75v2.25a.75.75 0 0 1-1.5 0v-2.25a5.25 5.25 0 0 0-5.25-5.25h-.75a5.25 5.25 0 0 0-5.25 5.25v2.25a.75.75 0 0 1-1.5 0v-2.25Z" clipRule="evenodd" />
+        <path d="M18.75 8.25a.75.75 0 0 0-1.5 0v2.25h-2.25a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0v-2.25h2.25a.75.75 0 0 0 0-1.5h-2.25V8.25Z" />
+    </svg>
 );

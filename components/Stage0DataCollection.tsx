@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Report, DataSource, AgentStatus } from '../App';
 import AddSourceModal from './AddSourceModal';
 import DeepResearchModal from './DeepResearchModal';
-import { PlusIcon, LinkIcon, FileTextIcon, UploadIcon, CheckCircleIcon, XCircleIcon, LoaderIcon, TrashIcon, MicIcon, UserCheckIcon, SparklesIcon, MoreVerticalIcon, EditIcon } from './icons/Icons';
+import { PlusIcon, LinkIcon, FileTextIcon, UploadIcon, CheckCircleIcon, XCircleIcon, LoaderIcon, TrashIcon, MicIcon, UserCheckIcon, SparklesIcon, MoreVerticalIcon, EditIcon, YoutubeIcon, ImageIcon } from './icons/Icons';
 
 const AgentStatusIndicator = ({ status }: { status: AgentStatus }) => {
     switch (status) {
@@ -25,7 +25,9 @@ const SourceStatusIcon = ({ status }: { status: DataSource['status'] }) => {
 const SourceTypeIcon = ({ type }: { type: DataSource['type'] }) => {
     switch (type) {
         case 'url': return <LinkIcon className="w-5 h-5 text-gray-400" />;
+        case 'youtube': return <YoutubeIcon className="w-5 h-5 text-red-400" />;
         case 'file': return <UploadIcon className="w-5 h-5 text-gray-400" />;
+        case 'image': return <ImageIcon className="w-5 h-5 text-gray-400" />;
         case 'text': return <FileTextIcon className="w-5 h-5 text-gray-400" />;
         case 'transcript': return <MicIcon className="w-5 h-5 text-gray-400" />;
         case 'assessment': return <UserCheckIcon className="w-5 h-5 text-gray-400" />;
@@ -41,9 +43,10 @@ interface AgentActionCardProps {
     lastTriggered?: string;
     onTrigger: () => void;
     disabled?: boolean;
+    ctaText?: string;
 }
 
-const AgentActionCard: React.FC<AgentActionCardProps> = ({ icon, title, status, lastTriggered, onTrigger, disabled }) => (
+const AgentActionCard: React.FC<AgentActionCardProps> = ({ icon, title, status, lastTriggered, onTrigger, disabled, ctaText }) => (
     <div className="bg-[rgba(255,255,255,0.08)] backdrop-blur-xl border border-[rgba(255,255,255,0.12)] rounded-2xl p-4 flex flex-col justify-between">
         <div>
             <div className="flex items-center gap-3 mb-2">
@@ -60,7 +63,7 @@ const AgentActionCard: React.FC<AgentActionCardProps> = ({ icon, title, status, 
             disabled={disabled || status === 'pending'}
             className="w-full mt-4 px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-500 transition-colors disabled:bg-gray-600 disabled:cursor-not-allowed"
         >
-            {status === 'pending' ? 'Running...' : 'Trigger Agent'}
+            {status === 'pending' ? 'Running...' : ctaText || 'Trigger Agent'}
         </button>
     </div>
 );
@@ -75,13 +78,22 @@ interface Stage0DataCollectionProps {
 const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onUpdateReport, onNextStage }) => {
   const [isAddSourceModalOpen, setAddSourceModalOpen] = useState(report.dataSources.length === 0);
   const [isResearchModalOpen, setResearchModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const prevDataSourcesLength = useRef(report.dataSources.length);
   
   useEffect(() => {
-    // If all sources are deleted, pop the modal open again
-    if (report.dataSources.length === 0 && !isAddSourceModalOpen) {
-      setAddSourceModalOpen(true);
+    if (toastMessage) {
+        const timer = setTimeout(() => setToastMessage(''), 3000);
+        return () => clearTimeout(timer);
     }
-  }, [report.dataSources.length, isAddSourceModalOpen]);
+  }, [toastMessage]);
+
+  useEffect(() => {
+    if (prevDataSourcesLength.current > 0 && report.dataSources.length === 0) {
+        setAddSourceModalOpen(true);
+    }
+    prevDataSourcesLength.current = report.dataSources.length;
+  }, [report.dataSources.length]);
 
 
   const handleAddSource = (source: Omit<DataSource, 'id' | 'status' | 'isSelected'>) => {
@@ -102,7 +114,7 @@ const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onU
         id: `ds-${Date.now()}`,
         status: 'Completed',
         isSelected: true,
-        summary: source.content.substring(0, 100) + '...'
+        summary: source.summary || (source.content ? source.content.substring(0, 100) + '...' : '')
     };
      onUpdateReport(report.id, {
         dataSources: [...report.dataSources, newSource]
@@ -139,22 +151,25 @@ const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onU
   
   const triggerFounderVoice = () => {
     const now = new Date().toISOString();
+    setToastMessage(`Email sent to ${report.founder.email} prompting them to complete the Founder Voice interview.`);
     onUpdateReport(report.id, { founderVoice: { status: 'pending', lastTriggered: now }});
 
+    // Simulate founder completing the task later
     setTimeout(() => {
         onUpdateReport(report.id, { founderVoice: { status: 'completed', lastTriggered: now }});
-        handleAddDataSource({ type: 'transcript', content: 'Founder Voice Call Transcript', filename: 'Founder Voice Call Transcript' });
-    }, 4000);
+        handleAddDataSource({ type: 'transcript', content: 'Founder Voice Call Transcript (Completed)', filename: 'Founder Voice Call Transcript' });
+    }, 8000);
   }
   
   const triggerBehaviourTest = () => {
     const now = new Date().toISOString();
+    setToastMessage(`Email sent to ${report.founder.email} prompting them to complete the Founder Behaviour Test.`);
     onUpdateReport(report.id, { founderBehaviourTest: { status: 'pending', lastTriggered: now }});
     
      setTimeout(() => {
         onUpdateReport(report.id, { founderBehaviourTest: { status: 'completed', lastTriggered: now }});
-        handleAddDataSource({ type: 'assessment', content: 'Founder Psychometric Assessment Results', filename: 'Founder Psychometric Assessment Results' });
-    }, 5000);
+        handleAddDataSource({ type: 'assessment', content: 'Founder Psychometric Assessment Results (Completed)', filename: 'Founder Psychometric Assessment Results' });
+    }, 10000);
   }
 
   // Simulate ingestion processing
@@ -162,7 +177,6 @@ const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onU
     const pendingSources = report.dataSources.filter(ds => ds.status === 'Pending');
     if (pendingSources.length > 0) {
       const timer = setTimeout(() => {
-        // FIX: Explicitly type the return value of map to prevent type widening on the 'status' property.
         const updatedSources = report.dataSources.map((ds): DataSource => 
             ds.status === 'Pending' ? { ...ds, status: 'Processing' } : ds
         );
@@ -174,10 +188,13 @@ const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onU
     const processingSources = report.dataSources.filter(ds => ds.status === 'Processing');
      if (processingSources.length > 0) {
       const timer = setTimeout(() => {
-        // FIX: Explicitly type the return value of map to prevent type widening on the 'status' property.
-        const updatedSources = report.dataSources.map((ds): DataSource => 
-            ds.status === 'Processing' ? { ...ds, status: 'Completed', summary: `This is a summary for ${ds.filename || ds.content.substring(0,30)}...` } : ds
-        );
+        const updatedSources = report.dataSources.map((ds): DataSource => {
+            if (ds.status === 'Processing') {
+                // ... (summary logic remains the same)
+                 return { ...ds, status: 'Completed', summary: `Summary for ${ds.filename || ds.content.substring(0,30)}...` };
+            }
+            return ds;
+        });
         onUpdateReport(report.id, { dataSources: updatedSources });
       }, 3000);
       return () => clearTimeout(timer);
@@ -186,9 +203,16 @@ const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onU
 
   const canProceed = report.dataSources.some(ds => ds.isSelected && ds.status === 'Completed');
   const allSelected = report.dataSources.length > 0 && report.dataSources.every(ds => ds.isSelected);
+  const hasTranscript = report.dataSources.some(ds => ds.type === 'transcript');
+  const hasAssessment = report.dataSources.some(ds => ds.type === 'assessment');
 
   return (
-    <div className="max-w-5xl mx-auto">
+    <div className="max-w-5xl mx-auto relative">
+        {toastMessage && (
+            <div className="fixed top-20 left-1/2 -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in-out">
+                {toastMessage}
+            </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <AgentActionCard 
                 icon={<MicIcon className="w-6 h-6 text-blue-300"/>}
@@ -196,7 +220,8 @@ const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onU
                 status={report.founderVoice.status}
                 lastTriggered={report.founderVoice.lastTriggered}
                 onTrigger={triggerFounderVoice}
-                disabled={!report.founder.phone}
+                disabled={!report.founder.email || report.founderVoice.status !== 'idle' || hasTranscript}
+                ctaText="Send Email"
             />
              <AgentActionCard 
                 icon={<UserCheckIcon className="w-6 h-6 text-purple-300"/>}
@@ -204,13 +229,15 @@ const Stage0DataCollection: React.FC<Stage0DataCollectionProps> = ({ report, onU
                 status={report.founderBehaviourTest.status}
                 lastTriggered={report.founderBehaviourTest.lastTriggered}
                 onTrigger={triggerBehaviourTest}
-                disabled={!report.founder.phone || !report.founder.email}
+                disabled={!report.founder.email || report.founderBehaviourTest.status !== 'idle' || hasAssessment}
+                ctaText="Send Email"
             />
              <AgentActionCard 
                 icon={<SparklesIcon className="w-6 h-6 text-green-300"/>}
                 title="Deep Research"
                 status={'idle'}
                 onTrigger={() => setResearchModalOpen(true)}
+                ctaText="Open"
             />
         </div>
 
@@ -334,7 +361,7 @@ const SourceItem: React.FC<{
                         autoFocus
                     />
                 ) : (
-                    <a href={source.type === 'url' ? source.content : undefined} target="_blank" rel="noopener noreferrer" className={`text-white truncate ${source.type === 'url' ? 'hover:underline' : ''}`}>
+                    <a href={(source.type === 'url' || source.type === 'youtube') ? source.content : undefined} target="_blank" rel="noopener noreferrer" className={`text-white truncate ${(source.type === 'url' || source.type === 'youtube') ? 'hover:underline' : ''}`}>
                       {contentDisplay}
                     </a>
                 )}
