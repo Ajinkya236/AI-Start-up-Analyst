@@ -108,7 +108,10 @@ const Step2VoiceAgent: React.FC<Step2VoiceAgentProps> = ({ onComplete, onPreviou
                 // This can happen if start() is called while it's already running.
                 // We'll just ensure the state is correct.
                 console.error("Could not start recognition", e);
-                if(status !== 'listening') setStatus('listening');
+                // FIX: This comparison is invalid due to TypeScript's type narrowing from the outer `if` condition.
+                // The check `status !== 'listening'` is always true here, causing a type error. The intention is to
+                // force the state to 'listening' if an error occurs, assuming it's because recognition is already active.
+                setStatus('listening');
             }
         } else {
              setStatus('idle');
